@@ -3,7 +3,6 @@ import os
 import json
 import datetime
 
-
 import CORE_FUNCTIONS.toasts as TOAST
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
 import CORE_FUNCTIONS.input_validation as IV
@@ -15,7 +14,6 @@ from MODULES.AWS.CORE.versions import VERSIONS as AWS_VERSIONS
 
 class PROJECT :
     def __init__(self) -> None :
-
         self.heading_details()
         self.create_upload_download_opts()
         self.list_projects()
@@ -52,30 +50,35 @@ class PROJECT :
 
     def list_projects(self) :
         dirs = os.listdir(CONSTANTS.PROJECTS_DIR)
-        projects = []
+
+        st.session_state[CONSTANTS.EXISTING_PROJECTS] = {}
         for _ in dirs :
-            if (CONSTANTS.PROJ_CONF_DIR in os.listdir(os.path.join(CONSTANTS.PROJECTS_DIR, _)) and
+            if not (CONSTANTS.PROJ_CONF_DIR in os.listdir(os.path.join(CONSTANTS.PROJECTS_DIR, _)) and
                     CONSTANTS.CONF_FILE in os.listdir(os.path.join(CONSTANTS.PROJECTS_DIR, _, CONSTANTS.PROJ_CONF_DIR)) and
                     CONSTANTS.RESOURCE_CONF_FILE in os.listdir(os.path.join(CONSTANTS.PROJECTS_DIR, _, CONSTANTS.PROJ_CONF_DIR))) :
-                projects.append(_)
-        st.session_state[CONSTANTS.EXISTING_PROJECTS] = projects
+                continue
+            if _ in st.session_state[CONSTANTS.EXISTING_PROJECTS] :
+                continue
+            with open(os.path.join(CONSTANTS.PROJECTS_DIR,
+                                   _,
+                                   CONSTANTS.PROJ_CONF_DIR,
+                                   CONSTANTS.CONF_FILE), "r") as conf_file :
+                st.session_state[CONSTANTS.EXISTING_PROJECTS][_] = {CONSTANTS.CONF_EXISTING_PROJECTS_CONFIGURATION: json.load(conf_file)}
 
         cols = st.columns([1]*3)
-        for _ in range(len(projects)) :
-            with cols[_%len(cols)] :
+        count = 0
+        for _ in sorted(list(st.session_state[CONSTANTS.EXISTING_PROJECTS].keys())) :
+            with cols[count%len(cols)] :
                 with st.container(border=True) :
-                    st.markdown(f"### {st.session_state[CONSTANTS.EXISTING_PROJECTS][_]}")
-                    with open(os.path.join(CONSTANTS.PROJECTS_DIR,
-                                           st.session_state[CONSTANTS.EXISTING_PROJECTS][_],
-                                           CONSTANTS.PROJ_CONF_DIR, CONSTANTS.CONF_FILE)) as conf_file :
-                        st.write(json.load(conf_file))
+                    st.markdown(f"### {_}")
+                    st.write(st.session_state[CONSTANTS.EXISTING_PROJECTS][_][CONSTANTS.CONF_EXISTING_PROJECTS_CONFIGURATION])
                     col1, col2 = st.columns([1]*2)
                     with col1 :
                         select_button = st.button(label="✅ **Select**",
                                                   type="secondary",
                                                   use_container_width=True, key=f"{_}_select")
                         if select_button :
-                            st.session_state[CONSTANTS.SELECTED_PROJECT] = projects[_]
+                            st.session_state[CONSTANTS.SELECTED_PROJECT] = _
                             st.rerun()
                     with col2 :
                         delete_button = st.button(label="❌ **Delete**",
@@ -83,13 +86,14 @@ class PROJECT :
                                                   use_container_width=True, key=f"{_}_delete")
                         if delete_button :
                             self.delete_prompt(_)
+            count += 1
 
     @st.dialog("Confirm Project Deletion")
     def delete_prompt(self,
-                      project_index: int) -> None :
+                      project: str) -> None :
         st.markdown(f"""
         ### Enter project name below to delete the project 
-        ( {st.session_state[CONSTANTS.EXISTING_PROJECTS][project_index]} )
+        ( {project} )
         """)
 
         prompt = st.text_input("", "")
@@ -97,17 +101,19 @@ class PROJECT :
                                   type="primary",
                                   use_container_width=True)
         
-        if prompt == st.session_state[CONSTANTS.EXISTING_PROJECTS][project_index] and delete_button :
+        if prompt == project and delete_button :
             try :
-                os.system(f"rm {os.path.join(CONSTANTS.PROJECTS_DIR, st.session_state[CONSTANTS.EXISTING_PROJECTS][project_index])} -r")
+                os.system(f"rm {os.path.join(CONSTANTS.PROJECTS_DIR, project)} -r")
 
                 if CONSTANTS.SELECTED_PROJECT in st.session_state :
                     del st.session_state[CONSTANTS.SELECTED_PROJECT]
+                
+                del st.session_state[CONSTANTS.EXISTING_PROJECTS][project]
 
-                TOAST.create_toast(f"Project {st.session_state[CONSTANTS.EXISTING_PROJECTS][project_index]} deleted", "🌟")
+                TOAST.create_toast(f"Project {project} deleted", "🌟")
 
             except :
-                TOAST.create_toast(f"Project {st.session_state[CONSTANTS.EXISTING_PROJECTS][project_index]} can't be deleted", "🌟")
+                TOAST.create_toast(f"Project {project} can't be deleted", "🌟")
             st.rerun()
 
     @st.dialog("Create Project")
@@ -154,6 +160,8 @@ class PROJECT :
                           indent=4)
             with open(os.path.join(CONSTANTS.PROJECTS_DIR, project_name, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE), "w") as resource_conf_file :
                 json.dump({}, resource_conf_file, indent=4)
+
+            st.session_state[CONSTANTS.EXISTING_PROJECTS][project_name] = {CONSTANTS.CONF_EXISTING_PROJECTS_CONFIGURATION: project_conf_base_format}
 
             TOAST.create_toast(f"Created Project {project_name}", "🌟")
             st.rerun()
