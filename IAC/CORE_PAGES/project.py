@@ -193,17 +193,13 @@ class PROJECT :
         if CONSTANTS.SELECTED_PROJECT not in st.session_state :
             st.write("Select a project first")
         else :
-            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR,
-                                           f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
-                os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR,
-                                             st.session_state[CONSTANTS.SELECTED_PROJECT])}.tar.xz")
+            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
+                os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR, st.session_state[CONSTANTS.SELECTED_PROJECT])}.tar.xz")
             generete_file = st.button("Generete File", use_container_width=True)
             if generete_file :
                 UD.gen_zip_file()
-            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR,
-                                           f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
-                with open(os.path.join(CONSTANTS.DOWNLOAD_DIR,
-                                       f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz"), "rb") as download_file :
+            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
+                with open(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz"), "rb") as download_file :
                     download_button = st.download_button(label="Download",
                                                          data=download_file,
                                                          file_name=f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz",
