@@ -1,3 +1,4 @@
+from os.path import isdir
 import streamlit as st
 import os
 import json
@@ -52,6 +53,8 @@ class PROJECT :
         TOAST.display_toasts()
 
     def list_projects(self) :
+        if not os.path.exists(CONSTANTS.PROJECTS_DIR) :
+            os.mkdir(CONSTANTS.PROJECTS_DIR)
         dirs = os.listdir(CONSTANTS.PROJECTS_DIR)
 
         st.session_state[CONSTANTS.EXISTING_PROJECTS] = {}
