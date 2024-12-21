@@ -1,7 +1,11 @@
+from numpy._core.defchararray import index
 import streamlit as st
 import os
 import json
 import datetime
+import importlib
+
+from streamlit.runtime.state import session_state
 
 import CORE_FUNCTIONS.toasts as TOAST
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
@@ -15,6 +19,7 @@ from MODULES.AWS.CORE.versions import VERSIONS as AWS_VERSIONS
 class PROJECT :
     def __init__(self) -> None :
         self.heading_details()
+        self.load_modules_versions()
         self.create_upload_download_opts()
         self.list_projects()
         self.show_toasts()
@@ -50,6 +55,16 @@ class PROJECT :
 
     def show_toasts(self) -> None :
         TOAST.display_toasts()
+
+    def load_modules_versions(self) -> None :
+        if CONSTANTS.MODULES_VERSIONS in st.session_state :
+            return
+        module_versions = {}
+        for _ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR)) :
+            m = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.CORE.versions")
+            module_versions[_] = m.VERSIONS
+        st.session_state[CONSTANTS.MODULES_VERSIONS] = module_versions
+
 
     def list_projects(self) :
         if not os.path.exists(CONSTANTS.PROJECTS_DIR) :
@@ -125,10 +140,6 @@ class PROJECT :
 
     @st.dialog("Create Project")
     def create_project(self) -> None :
-        available_modules = {
-            "AWS": AWS_VERSIONS
-        }
-
         project_name = st.text_input("Project Name", max_chars=20)
         if not IV.a_zA_z0_9(project_name) :
             st.write("⚠️ :red[Project name can only have [A-Za-z0-9]]")
@@ -137,9 +148,9 @@ class PROJECT :
 
         select_boxes_providers = {}
 
-        for _ in available_modules :
+        for _ in st.session_state[CONSTANTS.MODULES_VERSIONS] :
             select_boxes_providers[_] = st.selectbox(_,
-                                                     tuple(available_modules[_]),
+                                                     tuple(st.session_state[CONSTANTS.MODULES_VERSIONS][_]),
                                                      index=None)
 
 

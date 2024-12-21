@@ -4,6 +4,7 @@ PROJECTS_DIR = "./PROJECTS"
 TEMP_DIR = "./TEMP"
 DOWNLOAD_DIR = "./DOWNLOAD"
 UPLOAD_DIR = "./UPLOAD"
+MODULES_DIR = "MODULES"
 PROJ_CONF_DIR = "CONF"
 
 CONF_FILE = "conf.json"
@@ -17,3 +18,4 @@ TEMP_UPLOAD = os.path.join(TEMP_DIR, "UPLOAD")
 EXISTING_PROJECTS = "existing_projects"
 SELECTED_PROJECT = "selected_project"
 CONF_EXISTING_PROJECTS = "project_conf"
+MODULES_VERSIONS = "modules_versions"
