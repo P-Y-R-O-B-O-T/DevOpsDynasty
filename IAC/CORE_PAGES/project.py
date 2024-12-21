@@ -55,7 +55,6 @@ class PROJECT :
         if not os.path.exists(CONSTANTS.PROJECTS_DIR) :
             os.mkdir(CONSTANTS.PROJECTS_DIR)
         dirs = os.listdir(CONSTANTS.PROJECTS_DIR)
-
         st.session_state[CONSTANTS.EXISTING_PROJECTS] = {}
         for _ in dirs :
             if not (CONSTANTS.PROJ_CONF_DIR in os.listdir(os.path.join(CONSTANTS.PROJECTS_DIR, _)) and
