@@ -94,6 +94,8 @@ class PROJECT :
                                                   key=f"{_}_select")
                         if select_button :
                             st.session_state[CONSTANTS.SELECTED_PROJECT] = _
+                            with open(os.path.join(CONSTANTS.PROJECTS_DIR, _, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE), "r") as resource_conf_file :
+                                st.session_state[CONSTANTS.RESOURCE_CONF] = json.load(resource_conf_file)
                             st.rerun()
                     with col2 :
                         delete_button = st.button(label="❌ **Delete**",
@@ -152,9 +154,7 @@ class PROJECT :
         submit_button = st.button("Submit")
 
         if submit_button :
-            for _ in select_boxes_providers :
-                print(select_boxes_providers[_])
-            st.write(select_boxes_providers)
+            providers = {_:select_boxes_providers[_] for _ in select_boxes_providers if select_boxes_providers[_] is not None}
 
             if project_name in st.session_state[CONSTANTS.EXISTING_PROJECTS] :
                 TOAST.create_toast(f"Project {project_name} Already Exists", "⛔")
@@ -172,7 +172,7 @@ class PROJECT :
 
             project_conf_base_format = {
                                         "creation_date": str(datetime.datetime.now()),
-                                        "providers": select_boxes_providers
+                                        "providers": providers
                                         }
 
             with open(os.path.join(CONSTANTS.PROJECTS_DIR,
