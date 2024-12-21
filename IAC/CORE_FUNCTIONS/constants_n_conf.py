@@ -16,3 +16,4 @@ TEMP_UPLOAD = os.path.join(TEMP_DIR, "UPLOAD")
 
 EXISTING_PROJECTS = "existing_projects"
 SELECTED_PROJECT = "selected_project"
+CONF_EXISTING_PROJECTS = "project_conf"

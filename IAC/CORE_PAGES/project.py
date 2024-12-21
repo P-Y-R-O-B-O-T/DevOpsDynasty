@@ -63,7 +63,7 @@ class PROJECT :
                                    _,
                                    CONSTANTS.PROJ_CONF_DIR,
                                    CONSTANTS.CONF_FILE), "r") as conf_file :
-                st.session_state[CONSTANTS.EXISTING_PROJECTS][_] = {CONSTANTS.CONF_EXISTING_PROJECTS_CONFIGURATION: json.load(conf_file)}
+                st.session_state[CONSTANTS.EXISTING_PROJECTS][_] = {CONSTANTS.CONF_EXISTING_PROJECTS: json.load(conf_file)}
 
         cols = st.columns([1]*3)
         count = 0
@@ -71,7 +71,7 @@ class PROJECT :
             with cols[count%len(cols)] :
                 with st.container(border=True) :
                     st.markdown(f"### {_}")
-                    st.write(st.session_state[CONSTANTS.EXISTING_PROJECTS][_][CONSTANTS.CONF_EXISTING_PROJECTS_CONFIGURATION])
+                    st.write(st.session_state[CONSTANTS.EXISTING_PROJECTS][_][CONSTANTS.CONF_EXISTING_PROJECTS])
                     col1, col2 = st.columns([1]*2)
                     with col1 :
                         select_button = st.button(label="✅ **Select**",
@@ -159,9 +159,9 @@ class PROJECT :
                           provider_conf_file,
                           indent=4)
             with open(os.path.join(CONSTANTS.PROJECTS_DIR, project_name, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE), "w") as resource_conf_file :
-                json.dump({}, resource_conf_file, indent=4)
+                json.dump({"resources": {}}, resource_conf_file, indent=4)
 
-            st.session_state[CONSTANTS.EXISTING_PROJECTS][project_name] = {CONSTANTS.CONF_EXISTING_PROJECTS_CONFIGURATION: project_conf_base_format}
+            st.session_state[CONSTANTS.EXISTING_PROJECTS][project_name] = {CONSTANTS.CONF_EXISTING_PROJECTS: project_conf_base_format}
 
             TOAST.create_toast(f"Created Project {project_name}", "🌟")
             st.rerun()
