@@ -30,18 +30,21 @@ class PROJECT :
         col1, col2, col3 = st.columns([1]*3)
         with col1 :
             project_creation = st.button(label="📝 **Create Project**",
-                                         type="primary", use_container_width=True)
+                                         type="primary",
+                                         use_container_width=True)
             if project_creation :
                 self.create_project()
         with col2 :
             project_upload = st.button(label="📤 **Upload Project**",
-                                       type="primary", use_container_width=True)
+                                       type="primary",
+                                       use_container_width=True)
             if project_upload :
                 self.upload_project()
 
         with col3 :
             project_download = st.button(label="📥 **Download Project**",
-                                       type="primary", use_container_width=True)
+                                         type="primary",
+                                         use_container_width=True)
             if project_download :
                 self.download_project()
 
@@ -76,14 +79,16 @@ class PROJECT :
                     with col1 :
                         select_button = st.button(label="✅ **Select**",
                                                   type="secondary",
-                                                  use_container_width=True, key=f"{_}_select")
+                                                  use_container_width=True,
+                                                  key=f"{_}_select")
                         if select_button :
                             st.session_state[CONSTANTS.SELECTED_PROJECT] = _
                             st.rerun()
                     with col2 :
                         delete_button = st.button(label="❌ **Delete**",
                                                   type="secondary",
-                                                  use_container_width=True, key=f"{_}_delete")
+                                                  use_container_width=True,
+                                                  key=f"{_}_delete")
                         if delete_button :
                             self.delete_prompt(_)
             count += 1
@@ -103,7 +108,8 @@ class PROJECT :
         
         if prompt == project and delete_button :
             try :
-                os.system(f"rm {os.path.join(CONSTANTS.PROJECTS_DIR, project)} -r")
+                os.system(f"rm {os.path.join(CONSTANTS.PROJECTS_DIR,
+                                             project)} -r")
 
                 if CONSTANTS.SELECTED_PROJECT in st.session_state :
                     del st.session_state[CONSTANTS.SELECTED_PROJECT]
@@ -131,7 +137,9 @@ class PROJECT :
         select_boxes_providers = {}
 
         for _ in available_modules :
-            select_boxes_providers[_] = st.selectbox(_, tuple(available_modules[_]), index=None)
+            select_boxes_providers[_] = st.selectbox(_,
+                                                     tuple(available_modules[_]),
+                                                     index=None)
 
 
         submit_button = st.button("Submit")
@@ -149,16 +157,28 @@ class PROJECT :
                 TOAST.create_toast("Project name can only have [A-Za-z0-9]", "⚠️")
                 st.rerun()
 
-            os.mkdir(os.path.join(CONSTANTS.PROJECTS_DIR, project_name))
-            os.mkdir(os.path.join(CONSTANTS.PROJECTS_DIR, project_name, CONSTANTS.PROJ_CONF_DIR))
+            os.mkdir(os.path.join(CONSTANTS.PROJECTS_DIR,
+                                  project_name))
+            os.mkdir(os.path.join(CONSTANTS.PROJECTS_DIR,
+                                  project_name,
+                                  CONSTANTS.PROJ_CONF_DIR))
 
-            project_conf_base_format = {"creation_date": str(datetime.datetime.now()),"providers": select_boxes_providers}
+            project_conf_base_format = {
+                                        "creation_date": str(datetime.datetime.now()),
+                                        "providers": select_boxes_providers
+                                        }
 
-            with open(os.path.join(CONSTANTS.PROJECTS_DIR, project_name, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.CONF_FILE), "w") as provider_conf_file :
+            with open(os.path.join(CONSTANTS.PROJECTS_DIR,
+                                   project_name,
+                                   CONSTANTS.PROJ_CONF_DIR,
+                                   CONSTANTS.CONF_FILE), "w") as provider_conf_file :
                 json.dump(project_conf_base_format,
                           provider_conf_file,
                           indent=4)
-            with open(os.path.join(CONSTANTS.PROJECTS_DIR, project_name, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE), "w") as resource_conf_file :
+            with open(os.path.join(CONSTANTS.PROJECTS_DIR,
+                                   project_name,
+                                   CONSTANTS.PROJ_CONF_DIR,
+                                   CONSTANTS.RESOURCE_CONF_FILE), "w") as resource_conf_file :
                 json.dump({"resources": {}}, resource_conf_file, indent=4)
 
             st.session_state[CONSTANTS.EXISTING_PROJECTS][project_name] = {CONSTANTS.CONF_EXISTING_PROJECTS: project_conf_base_format}
@@ -171,13 +191,17 @@ class PROJECT :
         if CONSTANTS.SELECTED_PROJECT not in st.session_state :
             st.write("Select a project first")
         else :
-            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
-                os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR, st.session_state[CONSTANTS.SELECTED_PROJECT])}.tar.xz")
+            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR,
+                                           f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
+                os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR,
+                                             st.session_state[CONSTANTS.SELECTED_PROJECT])}.tar.xz")
             generete_file = st.button("Generete File", use_container_width=True)
             if generete_file :
                 UD.gen_zip_file()
-            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
-                with open(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz"), "rb") as download_file :
+            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR,
+                                           f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
+                with open(os.path.join(CONSTANTS.DOWNLOAD_DIR,
+                                       f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz"), "rb") as download_file :
                     download_button = st.download_button(label="Download",
                                                          data=download_file,
                                                          file_name=f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz",
@@ -208,7 +232,8 @@ class PROJECT :
                 st.rerun()
 
             try :
-                with open(os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name), "wb") as upload_file :
+                with open(os.path.join(CONSTANTS.UPLOAD_DIR,
+                                       file_upload.name), "wb") as upload_file :
                     upload_file.write(file_upload.read())
                 TOAST.create_toast("File uploaded successfully", "🌟")
             except :
@@ -216,20 +241,27 @@ class PROJECT :
                 st.rerun()
 
             try :
-                os.system(f"tar --extract --file {os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name)} -C {CONSTANTS.UPLOAD_DIR}")
-                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name)}")
+                os.system(f"tar --extract --file {os.path.join(CONSTANTS.UPLOAD_DIR,
+                                                               file_upload.name)} -C {CONSTANTS.UPLOAD_DIR}")
+                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR,
+                                             file_upload.name)}")
             except :
                 TOAST.create_toast("Error while saving files", "💾")
-                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name[:-7])} -r")
-                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name)}")
+                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR,
+                                             file_upload.name[:-7])} -r")
+                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR,
+                                             file_upload.name)}")
                 st.rerun()
 
             if not UD.extensive_project_structure_check(file_upload) :
                 TOAST.create_toast("Project structure not compatible", "🚫")
-                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name[:-7])} -r")
+                os.system(f"rm {os.path.join(CONSTANTS.UPLOAD_DIR,
+                                             file_upload.name[:-7])} -r")
                 st.rerun()
 
-            os.system(f"mv {os.path.join(CONSTANTS.UPLOAD_DIR, file_upload.name[:-7])} {os.path.join(CONSTANTS.PROJECTS_DIR, file_upload.name[:-7])}")
+            os.system(f"mv {os.path.join(CONSTANTS.UPLOAD_DIR,
+                                         file_upload.name[:-7])} {os.path.join(CONSTANTS.PROJECTS_DIR,
+                                                                               file_upload.name[:-7])}")
             TOAST.create_toast("Project uploaded successfully", "✅")
             st.rerun()
 
