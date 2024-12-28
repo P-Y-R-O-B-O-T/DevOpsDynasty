@@ -171,8 +171,8 @@ class PROJECT :
                                   CONSTANTS.PROJ_CONF_DIR))
 
             project_conf_base_format = {
-                                        "creation_date": str(datetime.datetime.now()),
-                                        "providers": providers
+                                        CONSTANTS.CREATION_DATE: str(datetime.datetime.now()),
+                                        CONSTANTS.PROVIDERS: providers
                                         }
 
             with open(os.path.join(CONSTANTS.PROJECTS_DIR,

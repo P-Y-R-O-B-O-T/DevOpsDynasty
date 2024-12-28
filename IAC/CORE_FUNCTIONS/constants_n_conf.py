@@ -24,6 +24,8 @@ SELECTED_PROJECT = "selected_project"
 CONF_EXISTING_PROJECTS = "project_conf"
 MODULES_VERSIONS = "modules_versions"
 RESOURCE_CONF = "resource_conf"
+PROVIDERS = "providers"
+CREATION_DATE = "creation_date"
 
 RESOURCE_MODULES = "resource_modules"
 UI_MODULES = "ui_modules"

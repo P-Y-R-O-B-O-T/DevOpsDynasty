@@ -27,6 +27,9 @@ class CONFIG :
         st.write("# Config page")
         if CONSTANTS.RESOURCE_CONF in st.session_state :
             st.write(st.session_state[CONSTANTS.RESOURCE_CONF])
+            st.write(st.session_state[CONSTANTS.EXISTING_PROJECTS])
+            st.write(st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS])
+
 
 #$$$$$$$$$$#
 
