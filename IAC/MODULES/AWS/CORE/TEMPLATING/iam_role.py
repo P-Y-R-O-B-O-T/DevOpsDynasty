@@ -17,3 +17,7 @@ class MODULE:
     def templete_5_18_0(self,
                         resources_data: dict) -> str :
         pass
+
+#$$$$$$$$$$#
+
+OBJ = MODULE()

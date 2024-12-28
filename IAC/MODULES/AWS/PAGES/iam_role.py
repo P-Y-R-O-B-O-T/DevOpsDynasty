@@ -27,3 +27,7 @@ class MODULE:
     @st.dialog("IAM Role")
     def modify_resource_5_18_0(self) -> None :
         pass
+
+#$$$$$$$$$$#
+
+OBJ = MODULE()
