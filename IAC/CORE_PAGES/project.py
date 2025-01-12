@@ -57,7 +57,7 @@ class PROJECT :
         module_versions = {}
         for _ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR)) :
             m = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.CORE.versions")
-            module_versions[_] = m.VERSIONS
+            module_versions[_.lower()] = m.VERSIONS
         st.session_state[CONSTANTS.MODULES_VERSIONS] = module_versions
 
 
@@ -96,6 +96,7 @@ class PROJECT :
                             st.session_state[CONSTANTS.SELECTED_PROJECT] = _
                             with open(os.path.join(CONSTANTS.PROJECTS_DIR, _, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE), "r") as resource_conf_file :
                                 st.session_state[CONSTANTS.RESOURCE_CONF] = json.load(resource_conf_file)
+                            st.session_state[CONSTANTS.SELECTED_RESOURCE] = None
                             st.rerun()
                     with col2 :
                         delete_button = st.button(label="❌ **Delete**",
@@ -146,7 +147,7 @@ class PROJECT :
         select_boxes_providers = {}
 
         for _ in st.session_state[CONSTANTS.MODULES_VERSIONS] :
-            select_boxes_providers[_] = st.selectbox(_,
+            select_boxes_providers[_] = st.selectbox(_.upper(),
                                                      tuple(st.session_state[CONSTANTS.MODULES_VERSIONS][_]),
                                                      index=None)
 

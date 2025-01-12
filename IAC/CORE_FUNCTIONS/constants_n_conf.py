@@ -30,3 +30,5 @@ CREATION_DATE = "creation_date"
 RESOURCE_MODULES = "resource_modules"
 UI_MODULES = "ui_modules"
 TEMPLATING_MODULES = "templating_modules"
+
+SELECTED_RESOURCE = "selected_resource"
