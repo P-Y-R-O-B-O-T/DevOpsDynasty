@@ -10,6 +10,7 @@ PROJ_CONF_DIR = "CONF"
 MODULES_PAGES_DIR = "PAGES"
 MODULES_CORE_DIR = "CORE"
 MODULES_CORE_TEMPLATING_DIR = "TEMPLATING"
+MODULES_CORE_DELETION_DIR = "DELETION"
 
 CONF_FILE = "conf.json"
 RESOURCE_CONF_FILE = "resource_conf.json"
@@ -27,8 +28,11 @@ RESOURCE_CONF = "resource_conf"
 PROVIDERS = "providers"
 CREATION_DATE = "creation_date"
 
+RESOURCES = "resources"
+
 RESOURCE_MODULES = "resource_modules"
 UI_MODULES = "ui_modules"
 TEMPLATING_MODULES = "templating_modules"
+DELETION_MODULES = "deletion_modules"
 
 SELECTED_RESOURCE = "selected_resource"
