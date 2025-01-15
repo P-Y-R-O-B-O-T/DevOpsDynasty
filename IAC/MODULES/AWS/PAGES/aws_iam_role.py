@@ -60,6 +60,7 @@ class MODULE:
                                   data={"name": name,
                                         "policy": policy}
                                   )
+
             st.rerun()
 
     def modify_resource(self,

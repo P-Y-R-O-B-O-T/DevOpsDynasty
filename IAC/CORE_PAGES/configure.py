@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import json
 import importlib
 
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
@@ -38,13 +39,23 @@ class CONFIG :
         TOAST.display_toasts()
 
     def main_ui(self) -> None :
+        if ("aws" in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES] and
+            st.session_state[CONSTANTS.SELECTED_RESOURCE] in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]["aws"]) :
+            st.markdown(MODULES["aws"][CONSTANTS.TEMPLATING_MODULES][st.session_state[CONSTANTS.SELECTED_RESOURCE]].OBJ.template())
         if st.session_state[CONSTANTS.SELECTED_RESOURCE] == None :
             st.write("# Config Page")
             st.write("Select a resource to configure")
             return
-        col1, col2 = st.columns([8, 1])
+        st.write(f"# Config Page {st.session_state[CONSTANTS.SELECTED_RESOURCE]}")
+        col1, col2 = st.columns([1, 1])
         with col1 :
-            st.write(f"# Config Page {st.session_state[CONSTANTS.SELECTED_RESOURCE]}")
+            #st.write(f"# Config Page {st.session_state[CONSTANTS.SELECTED_RESOURCE]}")
+            save_resource_conf_button = st.button("## Save",
+                                                  type="primary",
+                                                  use_container_width=True)
+            if save_resource_conf_button :
+                self.save_resource_conf()
+                self.save_tf_main_file()
         with col2 :
             create_resource_button = st.button("## Create",
                                                key=f"create_resource_{st.session_state[CONSTANTS.SELECTED_RESOURCE]}",
@@ -54,6 +65,7 @@ class CONFIG :
                 provider = st.session_state[CONSTANTS.SELECTED_RESOURCE][:st.session_state[CONSTANTS.SELECTED_RESOURCE].find("_")]
                 resource_type = st.session_state[CONSTANTS.SELECTED_RESOURCE]
                 MODULES[provider][CONSTANTS.UI_MODULES][resource_type].OBJ.create_resource()
+                #st.write(MODULES[provider][CONSTANTS.TEMPLATING_MODULES][resource_type].OBJ.template())
         used_resource_col, resource_list_col = st.columns([1, 3])
 
         with used_resource_col :
@@ -132,7 +144,28 @@ class CONFIG :
             #     TOAST.create_toast(f"Resource {resource_name} can't be deleted", "🌟")
             # st.rerun()
 
+    def save_resource_conf(self) -> None :
+        os.system(f"cp {os.path.join(CONSTANTS.PROJECTS_DIR, CONSTANTS.SELECTED_PROJECT, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE)} {os.path.join(CONSTANTS.PROJECTS_DIR, CONSTANTS.SELECTED_PROJECT, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE+CONSTANTS.BACKUP_FILE_EXTENSION)}")
+        with open(os.path.join(CONSTANTS.PROJECTS_DIR,
+                               st.session_state[CONSTANTS.SELECTED_PROJECT],
+                               CONSTANTS.PROJ_CONF_DIR,
+                               CONSTANTS.RESOURCE_CONF_FILE), "w") as resource_conf_file :
 
+            json.dump(st.session_state[CONSTANTS.RESOURCE_CONF],
+                      resource_conf_file,
+                      indent=4)
+
+    def save_tf_main_file(self) -> None :
+        with open(os.path.join(CONSTANTS.PROJECTS_DIR,
+                               st.session_state[CONSTANTS.SELECTED_PROJECT],
+                               CONSTANTS.TF_MAIN_FILE), "w") as tf_main_file :
+            templated_resource_confs = []
+            for _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES] :
+                for __ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][_] :
+                    templated_resource_confs.append(MODULES[_][CONSTANTS.TEMPLATING_MODULES][__].OBJ.template())
+            complete_tf_conf = "\n".join(templated_resource_confs)
+            tf_main_file.write(complete_tf_conf)
+            
 
     def sidebar(self) -> None :
         with st.sidebar :

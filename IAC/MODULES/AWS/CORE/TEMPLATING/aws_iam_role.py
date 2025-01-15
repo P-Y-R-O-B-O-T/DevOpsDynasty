@@ -1,3 +1,4 @@
+import jinja2
 import streamlit as st
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
 
@@ -12,14 +13,25 @@ class MODULE:
             "5.81.0": self.template_5_81_0
         }
 
-    def template(self,
-                 resources_data: dict) -> str :
+    def template(self) -> str :
         # return self.MAP_VERSIONS_METHODS_TEMPLATE[st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][MODULE_NAME]](resources_data)
-        return "TEMPLATE_DATA"
+        #return "TEMPLATE_DATA"
+        return self.MAP_VERSIONS_METHODS_TEMPLATE[st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][MODULE_NAME.lower()]]()
 
-    def template_5_81_0(self,
-                        resources_data: dict) -> str :
-        pass
+    def template_5_81_0(self) -> str :
+        env = jinja2.Environment()
+        template = env.from_string("""
+{% for _ in resources %}
+  resource "{{ resource_name }}" "{{ _ }}" {
+  name = "{{ _ }}"
+  assume_role_policy = jsonencode(
+{{ resources[_]["policy"] }}
+  )
+}
+{% endfor %}
+""")
+        return template.render(resources=st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][RESOURCE_NAME],
+                                 resource_name=RESOURCE_NAME)
 
 #$$$$$$$$$$#
 

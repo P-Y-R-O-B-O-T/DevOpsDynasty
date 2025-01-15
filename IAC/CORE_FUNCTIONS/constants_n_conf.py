@@ -14,6 +14,8 @@ MODULES_CORE_DELETION_DIR = "DELETION"
 
 CONF_FILE = "conf.json"
 RESOURCE_CONF_FILE = "resource_conf.json"
+BACKUP_FILE_EXTENSION = ".backup"
+TF_MAIN_FILE = "main.tf"
 
 TEMP_DOWNLOAD = os.path.join(TEMP_DIR, "DOWNLOAD")
 TEMP_UPLOAD = os.path.join(TEMP_DIR, "UPLOAD")
