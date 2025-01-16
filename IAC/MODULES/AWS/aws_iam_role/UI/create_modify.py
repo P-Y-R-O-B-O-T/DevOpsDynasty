@@ -17,6 +17,8 @@ class MODULE:
             "5.81.0": self.modify_resource_5_81_0
         }
 
+        self.VERSIONS = list(self.MAP_VERSIONS_METHODS_CREATE.keys())
+
     def create_resource(self) -> None :
 
         self.MAP_VERSIONS_METHODS_CREATE[st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][MODULE_NAME.lower()]]()

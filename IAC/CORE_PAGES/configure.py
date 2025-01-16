@@ -12,14 +12,15 @@ import CORE_FUNCTIONS.toasts as TOAST
 def load_modules() -> dict :
     modules = {}
     for _ in os.listdir(CONSTANTS.MODULES_DIR) :
-        modules[_.lower()] = {CONSTANTS.UI_MODULES: {},
-                              CONSTANTS.TEMPLATING_MODULES: {},
-                              CONSTANTS.DELETION_MODULES: {}}
-        for __ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR, _, CONSTANTS.MODULES_PAGES_DIR)) :
-            if os.path.isfile(os.path.join(CONSTANTS.MODULES_DIR, _, CONSTANTS.MODULES_PAGES_DIR, __)) :
-                modules[_.lower()][CONSTANTS.UI_MODULES][__.lower()[:-3]] = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{CONSTANTS.MODULES_PAGES_DIR}.{__[:-3]}")
-                modules[_.lower()][CONSTANTS.TEMPLATING_MODULES][__.lower()[:-3]] = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{CONSTANTS.MODULES_CORE_DIR}.{CONSTANTS.MODULES_CORE_TEMPLATING_DIR}.{__[:-3]}")
-                modules[_.lower()][CONSTANTS.DELETION_MODULES][__.lower()[:-3]] = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{CONSTANTS.MODULES_CORE_DIR}.{CONSTANTS.MODULES_CORE_DELETION_DIR}.{__[:-3]}")
+        modules[_.lower()] = {}
+        for __ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR, _)) :
+            if (os.path.isfile(os.path.join(CONSTANTS.MODULES_DIR, _, __, CONSTANTS.UI_MODULE_DIRECTORY, CONSTANTS.CREATE_MODIFY_MODULE_FILE)) and
+                os.path.isfile(os.path.join(CONSTANTS.MODULES_DIR, _, __, CONSTANTS.UTILITIES_MODULE_DIRECTORY, CONSTANTS.DELETION_MODULE_FILE)) and
+                os.path.isfile(os.path.join(CONSTANTS.MODULES_DIR, _, __, CONSTANTS.UTILITIES_MODULE_DIRECTORY, CONSTANTS.TEMPLATING_MODULE_FILE)))  :
+                modules[_.lower()][__.lower()] = {CONSTANTS.UI_MODULE: importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{__}.{CONSTANTS.UI_MODULE_DIRECTORY}.{CONSTANTS.CREATE_MODIFY_MODULE_FILE[:-3]}"),
+                                                  CONSTANTS.TEMPLATING_MODULE: importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{__}.{CONSTANTS.UTILITIES_MODULE_DIRECTORY}.{CONSTANTS.TEMPLATING_MODULE_FILE[:-3]}"),
+                                                  CONSTANTS.DELETION_MODULE: importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{__}.{CONSTANTS.UTILITIES_MODULE_DIRECTORY}.{CONSTANTS.DELETION_MODULE_FILE[:-3]}")}
+
     return modules
 
 MODULES = load_modules()
@@ -41,7 +42,7 @@ class CONFIG :
     def main_ui(self) -> None :
         if ("aws" in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES] and
             st.session_state[CONSTANTS.SELECTED_RESOURCE] in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]["aws"]) :
-            st.markdown(MODULES["aws"][CONSTANTS.TEMPLATING_MODULES][st.session_state[CONSTANTS.SELECTED_RESOURCE]].OBJ.template())
+            st.markdown(MODULES["aws"][st.session_state[CONSTANTS.SELECTED_RESOURCE]][CONSTANTS.TEMPLATING_MODULE].OBJ.template())
         if st.session_state[CONSTANTS.SELECTED_RESOURCE] == None :
             st.write("# Config Page")
             st.write("Select a resource to configure")
@@ -49,7 +50,6 @@ class CONFIG :
         st.write(f"# Config Page {st.session_state[CONSTANTS.SELECTED_RESOURCE]}")
         col1, col2 = st.columns([1, 1])
         with col1 :
-            #st.write(f"# Config Page {st.session_state[CONSTANTS.SELECTED_RESOURCE]}")
             save_resource_conf_button = st.button("## Save",
                                                   type="primary",
                                                   use_container_width=True)
@@ -64,8 +64,7 @@ class CONFIG :
             if create_resource_button :
                 provider = st.session_state[CONSTANTS.SELECTED_RESOURCE][:st.session_state[CONSTANTS.SELECTED_RESOURCE].find("_")]
                 resource_type = st.session_state[CONSTANTS.SELECTED_RESOURCE]
-                MODULES[provider][CONSTANTS.UI_MODULES][resource_type].OBJ.create_resource()
-                #st.write(MODULES[provider][CONSTANTS.TEMPLATING_MODULES][resource_type].OBJ.template())
+                MODULES[provider][resource_type][CONSTANTS.UI_MODULE].OBJ.create_resource()
         used_resource_col, resource_list_col = st.columns([1, 3])
 
         with used_resource_col :
@@ -78,7 +77,6 @@ class CONFIG :
         for _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES] :
             for __ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][_] :
                 used_resource_select_button = st.button(f"{__.lower()}",
-                                                        #key=f"used_resource_selection{_.lower()}_{__.lower()}",
                                                         use_container_width=True)
                 if used_resource_select_button :
                     st.session_state[CONSTANTS.SELECTED_RESOURCE] = f"{__.lower()}"
@@ -98,7 +96,7 @@ class CONFIG :
                                                 use_container_width=True,
                                                 key=f"edit_{st.session_state[CONSTANTS.SELECTED_RESOURCE]}_{_}")
                         if edit_button :
-                            MODULES[provider][CONSTANTS.UI_MODULES][resource_type].OBJ.modify_resource(name=_,
+                            MODULES[provider][resource_type][CONSTANTS.UI_MODULE].OBJ.modify_resource(name=_,
                                                                                                        data=st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][provider.lower()][resource_type.lower()][_])
                     with col2 :
                         deletion_button = st.button("Delete",
@@ -123,26 +121,11 @@ class CONFIG :
                                   key=f"deletion_submition_button_{st.session_state[CONSTANTS.SELECTED_RESOURCE]}_{resource_name}")
 
         if prompt == resource_name and delete_button :
-            #try :
-                # os.system(f"rm {os.path.join(CONSTANTS.PROJECTS_DIR,
-                #                              project)} -r")
-                #
-                # if CONSTANTS.SELECTED_PROJECT in st.session_state :
-                #     del st.session_state[CONSTANTS.SELECTED_PROJECT]
-                #
-                # del st.session_state[CONSTANTS.EXISTING_PROJECTS][project]
             provider = st.session_state[CONSTANTS.SELECTED_RESOURCE][:st.session_state[CONSTANTS.SELECTED_RESOURCE].find("_")]
             resource_type = st.session_state[CONSTANTS.SELECTED_RESOURCE]
 
 
-            MODULES[provider][CONSTANTS.DELETION_MODULES][resource_type].OBJ.delete_resource(resource_name)
-            #
-            # if obligations == None :
-            #
-            #     TOAST.create_toast(f"Resource {resource_name} deleted", "🌟")
-            # else :
-            #     TOAST.create_toast(f"Resource {resource_name} can't be deleted", "🌟")
-            # st.rerun()
+            MODULES[provider][resource_type][CONSTANTS.DELETION_MODULE].OBJ.delete_resource(resource_name)
 
     def save_resource_conf(self) -> None :
         os.system(f"cp {os.path.join(CONSTANTS.PROJECTS_DIR, CONSTANTS.SELECTED_PROJECT, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE)} {os.path.join(CONSTANTS.PROJECTS_DIR, CONSTANTS.SELECTED_PROJECT, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE+CONSTANTS.BACKUP_FILE_EXTENSION)}")
@@ -162,7 +145,7 @@ class CONFIG :
             templated_resource_confs = []
             for _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES] :
                 for __ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][_] :
-                    templated_resource_confs.append(MODULES[_][CONSTANTS.TEMPLATING_MODULES][__].OBJ.template())
+                    templated_resource_confs.append(MODULES[_][__][CONSTANTS.TEMPLATING_MODULE].OBJ.template())
             complete_tf_conf = "\n".join(templated_resource_confs)
             tf_main_file.write(complete_tf_conf)
             
@@ -172,7 +155,7 @@ class CONFIG :
             for _ in MODULES :
                 if _.lower() in st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS] :
                     st.write(_)
-                    for __ in MODULES[_][CONSTANTS.UI_MODULES] :
+                    for __ in MODULES[_] :
                         resource_select_button = st.button(f"{__.lower()}",
                                                            key=f"resource_selection{_}_{__}",
                                                            use_container_width=True)
