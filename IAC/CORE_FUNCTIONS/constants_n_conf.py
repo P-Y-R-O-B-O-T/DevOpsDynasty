@@ -18,10 +18,12 @@ UTILITIES_MODULE_DIRECTORY = "UTILITIES"
 CREATE_MODIFY_MODULE_FILE = "create_modify.py"
 DELETION_MODULE_FILE = "deletion.py"
 TEMPLATING_MODULE_FILE = "templating.py"
+VERSIONS_MODULE_FILE = "versions.py"
 
 TEMP_DOWNLOAD = os.path.join(TEMP_DIR, "DOWNLOAD")
 TEMP_UPLOAD = os.path.join(TEMP_DIR, "UPLOAD")
 
+COMPRESSION_FORMAT = "tar.xz"
 #$$$$$$$$$$#
 
 EXISTING_PROJECTS = "existing_projects"

@@ -56,7 +56,7 @@ class PROJECT :
             return
         module_versions = {}
         for _ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR)) :
-            m = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.versions")
+            m = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.{CONSTANTS.VERSIONS_MODULE_FILE[:-3]}")
             module_versions[_.lower()] = m.VERSIONS
         st.session_state[CONSTANTS.MODULES_VERSIONS] = module_versions
 
@@ -187,7 +187,7 @@ class PROJECT :
                                    project_name,
                                    CONSTANTS.PROJ_CONF_DIR,
                                    CONSTANTS.RESOURCE_CONF_FILE), "w") as resource_conf_file :
-                json.dump({"resources": {}}, resource_conf_file, indent=4)
+                json.dump({CONSTANTS.RESOURCES: {}}, resource_conf_file, indent=4)
 
             st.session_state[CONSTANTS.EXISTING_PROJECTS][project_name] = {CONSTANTS.CONF_EXISTING_PROJECTS: project_conf_base_format}
 
@@ -199,16 +199,16 @@ class PROJECT :
         if CONSTANTS.SELECTED_PROJECT not in st.session_state :
             st.write("Select a project first")
         else :
-            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
-                os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR, st.session_state[CONSTANTS.SELECTED_PROJECT])}.tar.xz")
+            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}")) :
+                os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR, st.session_state[CONSTANTS.SELECTED_PROJECT])}.{CONSTANTS.COMPRESSION_FORMAT}")
             generete_file = st.button("Generete File", use_container_width=True)
             if generete_file :
                 UD.gen_zip_file()
-            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz")) :
-                with open(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz"), "rb") as download_file :
+            if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}")) :
+                with open(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}"), "rb") as download_file :
                     download_button = st.download_button(label="Download",
                                                          data=download_file,
-                                                         file_name=f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.tar.xz",
+                                                         file_name=f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}",
                                                          mime="application/octet-stream",
                                                          type="primary",
                                                          use_container_width=True)
@@ -218,13 +218,13 @@ class PROJECT :
         if not os.path.exists(CONSTANTS.UPLOAD_DIR) :
             os.mkdir(CONSTANTS.UPLOAD_DIR)
 
-        file_upload = st.file_uploader("Upload a project file (.tar.xz)",
+        file_upload = st.file_uploader(f"Upload a project file (.{CONSTANTS.COMPRESSION_FORMAT})",
                                        accept_multiple_files=False)
         if file_upload is not None :
             st.write(file_upload.size)
 
-            if file_upload.name[-7:] != ".tar.xz" :
-                TOAST.create_toast("Upload a tar file with xz compression only (.tar.xz)", "⚠️")
+            if file_upload.name[-7:] != f".{CONSTANTS.COMPRESSION_FORMAT}" :
+                TOAST.create_toast(f"Upload a tar file with xz compression only (.{CONSTANTS.COMPRESSION_FORMAT})", "⚠️")
                 st.rerun()
 
             if not IV.a_zA_z0_9(file_upload.name[:-7]) :
