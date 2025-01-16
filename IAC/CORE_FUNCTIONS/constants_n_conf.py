@@ -7,15 +7,17 @@ UPLOAD_DIR = "./UPLOAD"
 MODULES_DIR = "MODULES"
 PROJ_CONF_DIR = "CONF"
 
-MODULES_PAGES_DIR = "PAGES"
-MODULES_CORE_DIR = "CORE"
-MODULES_CORE_TEMPLATING_DIR = "TEMPLATING"
-MODULES_CORE_DELETION_DIR = "DELETION"
-
 CONF_FILE = "conf.json"
 RESOURCE_CONF_FILE = "resource_conf.json"
 BACKUP_FILE_EXTENSION = ".backup"
 TF_MAIN_FILE = "main.tf"
+
+
+UI_MODULE_DIRECTORY = "UI"
+UTILITIES_MODULE_DIRECTORY = "UTILITIES"
+CREATE_MODIFY_MODULE_FILE = "create_modify.py"
+DELETION_MODULE_FILE = "deletion.py"
+TEMPLATING_MODULE_FILE = "templating.py"
 
 TEMP_DOWNLOAD = os.path.join(TEMP_DIR, "DOWNLOAD")
 TEMP_UPLOAD = os.path.join(TEMP_DIR, "UPLOAD")
@@ -32,9 +34,8 @@ CREATION_DATE = "creation_date"
 
 RESOURCES = "resources"
 
-RESOURCE_MODULES = "resource_modules"
-UI_MODULES = "ui_modules"
-TEMPLATING_MODULES = "templating_modules"
-DELETION_MODULES = "deletion_modules"
+UI_MODULE = "ui_modules"
+TEMPLATING_MODULE = "templating_modules"
+DELETION_MODULE = "deletion_modules"
 
 SELECTED_RESOURCE = "selected_resource"

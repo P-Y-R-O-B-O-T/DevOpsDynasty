@@ -56,7 +56,7 @@ class PROJECT :
             return
         module_versions = {}
         for _ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR)) :
-            m = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.CORE.versions")
+            m = importlib.import_module(f"{CONSTANTS.MODULES_DIR}.{_}.versions")
             module_versions[_.lower()] = m.VERSIONS
         st.session_state[CONSTANTS.MODULES_VERSIONS] = module_versions
 
