@@ -52,7 +52,8 @@ class CONFIG :
         with col1 :
             save_resource_conf_button = st.button("## Save",
                                                   type="primary",
-                                                  use_container_width=True)
+                                                  use_container_width=True,
+                                                  key=f"save_config_button")
             if save_resource_conf_button :
                 self.save_resource_conf()
                 self.save_tf_main_file()
@@ -77,7 +78,8 @@ class CONFIG :
         for _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES] :
             for __ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][_] :
                 used_resource_select_button = st.button(f"{__.lower()}",
-                                                        use_container_width=True)
+                                                        use_container_width=True,
+                                                        key=f"used_resource_selection_{__}")
                 if used_resource_select_button :
                     st.session_state[CONSTANTS.SELECTED_RESOURCE] = f"{__.lower()}"
                     st.rerun()

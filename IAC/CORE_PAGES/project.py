@@ -4,6 +4,12 @@ import json
 import datetime
 import importlib
 
+import streamlit as st
+import os
+import json
+import datetime
+import importlib
+
 import CORE_FUNCTIONS.toasts as TOAST
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
 import CORE_FUNCTIONS.input_validation as IV
@@ -31,20 +37,23 @@ class PROJECT :
         with col1 :
             project_creation = st.button(label="📝 **Create Project**",
                                          type="primary",
-                                         use_container_width=True)
+                                         use_container_width=True,
+                                         key=f"project_creation_button")
             if project_creation :
                 self.create_project()
         with col2 :
             project_upload = st.button(label="📤 **Upload Project**",
                                        type="primary",
-                                       use_container_width=True)
+                                       use_container_width=True,
+                                       key=f"project_upload_button")
             if project_upload :
                 self.upload_project()
 
         with col3 :
             project_download = st.button(label="📥 **Download Project**",
                                          type="primary",
-                                         use_container_width=True)
+                                         use_container_width=True,
+                                         key=f"project_download_button")
             if project_download :
                 self.download_project()
 
@@ -91,7 +100,7 @@ class PROJECT :
                         select_button = st.button(label="✅ **Select**",
                                                   type="secondary",
                                                   use_container_width=True,
-                                                  key=f"{_}_select")
+                                                  key=f"project_select_{_}")
                         if select_button :
                             st.session_state[CONSTANTS.SELECTED_PROJECT] = _
                             with open(os.path.join(CONSTANTS.PROJECTS_DIR, _, CONSTANTS.PROJ_CONF_DIR, CONSTANTS.RESOURCE_CONF_FILE), "r") as resource_conf_file :
@@ -102,7 +111,7 @@ class PROJECT :
                         delete_button = st.button(label="❌ **Delete**",
                                                   type="secondary",
                                                   use_container_width=True,
-                                                  key=f"{_}_delete")
+                                                  key=f"project_delete_{_}")
                         if delete_button :
                             self.delete_prompt(_)
             count += 1
@@ -115,10 +124,13 @@ class PROJECT :
         ( {project} )
         """)
 
-        prompt = st.text_input("", "")
+        prompt = st.text_input("", "",
+                               key=f"project_delete_prompt_{project}")
+        
         delete_button = st.button(label="Delete",
                                   type="primary",
-                                  use_container_width=True)
+                                  use_container_width=True,
+                                  key=f"project_delete_prompt_button_{project}")
         
         if prompt == project and delete_button :
             try :
@@ -138,7 +150,7 @@ class PROJECT :
 
     @st.dialog("Create Project")
     def create_project(self) -> None :
-        project_name = st.text_input("Project Name", max_chars=20)
+        project_name = st.text_input("Project Name", max_chars=20, key=f"create_project_projectname")
         if not IV.a_zA_z0_9(project_name) :
             st.write("⚠️ :red[Project name can only have [A-Za-z0-9]]")
 
@@ -149,12 +161,13 @@ class PROJECT :
         for _ in st.session_state[CONSTANTS.MODULES_VERSIONS] :
             select_boxes_providers[_] = st.selectbox(_.upper(),
                                                      tuple(st.session_state[CONSTANTS.MODULES_VERSIONS][_]),
-                                                     index=None)
+                                                     index=None,
+                                                     key=f"selectbox_project_creation_{_}")
 
 
         submit_button = st.button("Submit")
 
-        if submit_button :
+        if submit_button and project_name :
             providers = {_:select_boxes_providers[_] for _ in select_boxes_providers if select_boxes_providers[_] is not None}
 
             if project_name in st.session_state[CONSTANTS.EXISTING_PROJECTS] :
@@ -201,7 +214,7 @@ class PROJECT :
         else :
             if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}")) :
                 os.system(f"rm {os.path.join(CONSTANTS.DOWNLOAD_DIR, st.session_state[CONSTANTS.SELECTED_PROJECT])}.{CONSTANTS.COMPRESSION_FORMAT}")
-            generete_file = st.button("Generete File", use_container_width=True)
+            generete_file = st.button("Generete File", use_container_width=True, key=f"generate_download_file_{st.session_state[CONSTANTS.SELECTED_PROJECT]}")
             if generete_file :
                 UD.gen_zip_file()
             if os.path.exists(os.path.join(CONSTANTS.DOWNLOAD_DIR, f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}")) :
@@ -211,7 +224,8 @@ class PROJECT :
                                                          file_name=f"{st.session_state[CONSTANTS.SELECTED_PROJECT]}.{CONSTANTS.COMPRESSION_FORMAT}",
                                                          mime="application/octet-stream",
                                                          type="primary",
-                                                         use_container_width=True)
+                                                         use_container_width=True,
+                                                         key=f"download_link_{st.session_state[CONSTANTS.SELECTED_PROJECT]}")
 
     @st.dialog("Upload Project")
     def upload_project(self) -> None :
@@ -219,7 +233,8 @@ class PROJECT :
             os.mkdir(CONSTANTS.UPLOAD_DIR)
 
         file_upload = st.file_uploader(f"Upload a project file (.{CONSTANTS.COMPRESSION_FORMAT})",
-                                       accept_multiple_files=False)
+                                       accept_multiple_files=False,
+                                       key=f"project_file_upload")
         if file_upload is not None :
             st.write(file_upload.size)
 

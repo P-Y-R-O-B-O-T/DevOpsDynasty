@@ -48,10 +48,10 @@ class MODULE:
     @st.dialog(f"Create {RESOURCE_NAME}")
     def create_resource_5_81_0(self) -> None :
         name = st.text_input("Name",
-                             key="aws_iam_role_input",)
-        policy = st.text_area("Role policy")
+                             key=f"{RESOURCE_NAME}_creation_name_input")
+        policy = st.text_area("Role policy", key=f"{RESOURCE_NAME}_creation_policy_input")
 
-        submit_button = st.button("Submit")
+        submit_button = st.button("Submit", key=f"{RESOURCE_NAME}_creation_submit_button")
 
         if submit_button :
             if name and policy :
@@ -76,11 +76,13 @@ class MODULE:
                                data: dict) -> None :
         name = st.text_input(label="Name",
                              value=name,
-                             disabled=True)
+                             disabled=True,
+                             key=f"{RESOURCE_NAME}_modification_name_input")
         policy = st.text_area(label="Role policy",
-                              value=(lambda data : data["policy"] if "policy" in data else None)(data))
+                              value=(lambda data : data["policy"] if "policy" in data else None)(data),
+                              key=f"{RESOURCE_NAME}_modification_policy_input")
 
-        submit_button = st.button("Submit")
+        submit_button = st.button("Submit", key=f"{RESOURCE_NAME}_modification_submit_button")
         
         if submit_button :
             if name and policy :
