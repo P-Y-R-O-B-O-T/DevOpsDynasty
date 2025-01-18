@@ -12,6 +12,7 @@ class MAIN_APP:
         navigations = {
             "project": st.Page("CORE_PAGES/project.py", title="🚀 Manage Projects"),
             "config": st.Page("CORE_PAGES/configure.py", title="🛠️ Configure Resources"),
+            "view config": st.Page("CORE_PAGES/view_conf.py", title="👀 View Config"),
         }
         page_navigations = st.navigation([navigations[_] for _ in navigations])
         page_navigations.run()

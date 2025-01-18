@@ -33,6 +33,7 @@ MODULES_VERSIONS = "modules_versions"
 RESOURCE_CONF = "resource_conf"
 PROVIDERS = "providers"
 CREATION_DATE = "creation_date"
+MODULES = "modules"
 
 RESOURCES = "resources"
 

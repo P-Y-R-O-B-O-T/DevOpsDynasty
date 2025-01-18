@@ -1,67 +1,17 @@
 import streamlit as st
 import os
 import json
-import importlib
 
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
 import CORE_FUNCTIONS.toasts as TOAST
 import CORE_FUNCTIONS.tf_conf as TF
+import CORE_FUNCTIONS.load_modules as LM
 
 # $$$$$$$$$$#
 
-
-@st.cache_resource
-def load_modules() -> dict:
-    modules = {}
-    for _ in os.listdir(CONSTANTS.MODULES_DIR):
-        modules[_.lower()] = {}
-        for __ in os.listdir(os.path.join(CONSTANTS.MODULES_DIR, _)):
-            if (
-                os.path.isfile(
-                    os.path.join(
-                        CONSTANTS.MODULES_DIR,
-                        _,
-                        __,
-                        CONSTANTS.UI_MODULE_DIRECTORY,
-                        CONSTANTS.CREATE_MODIFY_MODULE_FILE,
-                    )
-                )
-                and os.path.isfile(
-                    os.path.join(
-                        CONSTANTS.MODULES_DIR,
-                        _,
-                        __,
-                        CONSTANTS.UTILITIES_MODULE_DIRECTORY,
-                        CONSTANTS.DELETION_MODULE_FILE,
-                    )
-                )
-                and os.path.isfile(
-                    os.path.join(
-                        CONSTANTS.MODULES_DIR,
-                        _,
-                        __,
-                        CONSTANTS.UTILITIES_MODULE_DIRECTORY,
-                        CONSTANTS.TEMPLATING_MODULE_FILE,
-                    )
-                )
-            ):
-                modules[_.lower()][__.lower()] = {
-                    CONSTANTS.UI_MODULE: importlib.import_module(
-                        f"{CONSTANTS.MODULES_DIR}.{_}.{__}.{CONSTANTS.UI_MODULE_DIRECTORY}.{CONSTANTS.CREATE_MODIFY_MODULE_FILE[:-3]}"
-                    ),
-                    CONSTANTS.TEMPLATING_MODULE: importlib.import_module(
-                        f"{CONSTANTS.MODULES_DIR}.{_}.{__}.{CONSTANTS.UTILITIES_MODULE_DIRECTORY}.{CONSTANTS.TEMPLATING_MODULE_FILE[:-3]}"
-                    ),
-                    CONSTANTS.DELETION_MODULE: importlib.import_module(
-                        f"{CONSTANTS.MODULES_DIR}.{_}.{__}.{CONSTANTS.UTILITIES_MODULE_DIRECTORY}.{CONSTANTS.DELETION_MODULE_FILE[:-3]}"
-                    ),
-                }
-
-    return modules
-
-
-MODULES = load_modules()
-
+MODULES = LM.load_modules(
+    modules_needed=[CONSTANTS.UI_MODULE, CONSTANTS.DELETION_MODULE]
+)
 
 # $$$$$$$$$$#
 
@@ -77,16 +27,6 @@ class CONFIG:
         TOAST.display_toasts()
 
     def main_ui(self) -> None:
-        # if (
-        #     "aws" in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]
-        #     and st.session_state[CONSTANTS.SELECTED_RESOURCE]
-        #     in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]["aws"]
-        # ):
-        #     st.markdown(
-        #         MODULES["aws"][st.session_state[CONSTANTS.SELECTED_RESOURCE]][
-        #             CONSTANTS.TEMPLATING_MODULE
-        #         ].OBJ.template()
-        #     )
         if st.session_state[CONSTANTS.SELECTED_RESOURCE] == None:
             st.write("# Config Page")
             st.write("Select a resource to configure")
@@ -240,7 +180,7 @@ class CONFIG:
             ),
             "w",
         ) as tf_main_file:
-            complete_tf_conf = TF.conf_in_tf_syntax(modules=MODULES)
+            complete_tf_conf = TF.conf_in_tf_syntax()
             tf_main_file.write(complete_tf_conf)
 
     def sidebar(self) -> None:
