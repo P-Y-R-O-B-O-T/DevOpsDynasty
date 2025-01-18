@@ -9,7 +9,7 @@ import CORE_FUNCTIONS.toasts as TOAST
 # $$$$$$$$$$#
 
 
-# @st.cache_resource
+@st.cache_resource
 def load_modules() -> dict:
     modules = {}
     for _ in os.listdir(CONSTANTS.MODULES_DIR):
@@ -61,7 +61,6 @@ def load_modules() -> dict:
 
 MODULES = load_modules()
 
-st.write(MODULES)
 
 # $$$$$$$$$$#
 
@@ -77,16 +76,16 @@ class CONFIG:
         TOAST.display_toasts()
 
     def main_ui(self) -> None:
-        if (
-            "aws" in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]
-            and st.session_state[CONSTANTS.SELECTED_RESOURCE]
-            in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]["aws"]
-        ):
-            st.markdown(
-                MODULES["aws"][st.session_state[CONSTANTS.SELECTED_RESOURCE]][
-                    CONSTANTS.TEMPLATING_MODULE
-                ].OBJ.template()
-            )
+        # if (
+        #     "aws" in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]
+        #     and st.session_state[CONSTANTS.SELECTED_RESOURCE]
+        #     in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]["aws"]
+        # ):
+        #     st.markdown(
+        #         MODULES["aws"][st.session_state[CONSTANTS.SELECTED_RESOURCE]][
+        #             CONSTANTS.TEMPLATING_MODULE
+        #         ].OBJ.template()
+        #     )
         if st.session_state[CONSTANTS.SELECTED_RESOURCE] == None:
             st.write("# Config Page")
             st.write("Select a resource to configure")
