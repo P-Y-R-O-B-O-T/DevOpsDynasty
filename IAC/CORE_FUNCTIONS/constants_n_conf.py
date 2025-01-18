@@ -24,7 +24,7 @@ TEMP_DOWNLOAD = os.path.join(TEMP_DIR, "DOWNLOAD")
 TEMP_UPLOAD = os.path.join(TEMP_DIR, "UPLOAD")
 
 COMPRESSION_FORMAT = "tar.xz"
-#$$$$$$$$$$#
+# $$$$$$$$$$#
 
 EXISTING_PROJECTS = "existing_projects"
 SELECTED_PROJECT = "selected_project"
