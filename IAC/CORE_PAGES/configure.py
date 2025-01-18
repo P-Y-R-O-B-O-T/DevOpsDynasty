@@ -5,6 +5,7 @@ import importlib
 
 import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
 import CORE_FUNCTIONS.toasts as TOAST
+import CORE_FUNCTIONS.tf_conf as TF
 
 # $$$$$$$$$$#
 
@@ -239,15 +240,7 @@ class CONFIG:
             ),
             "w",
         ) as tf_main_file:
-            templated_resource_confs = []
-            for _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES]:
-                for __ in st.session_state[CONSTANTS.RESOURCE_CONF][
-                    CONSTANTS.RESOURCES
-                ][_]:
-                    templated_resource_confs.append(
-                        MODULES[_][__][CONSTANTS.TEMPLATING_MODULE].OBJ.template()
-                    )
-            complete_tf_conf = "\n".join(templated_resource_confs)
+            complete_tf_conf = TF.conf_in_tf_syntax(modules=MODULES)
             tf_main_file.write(complete_tf_conf)
 
     def sidebar(self) -> None:
