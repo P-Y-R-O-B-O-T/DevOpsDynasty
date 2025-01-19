@@ -6,9 +6,8 @@ import CORE_FUNCTIONS.toasts as TOAST
 # $$$$$$$$$$#
 
 MODULE_NAME = "AWS"
-RESOURCE_NAME = "aws_iam_role"
+RESOURCE_NAME = "aws_iam_policy"
 
-AWS_IAM_POLICY = "aws_iam_policy"
 
 class MODULE:
     def __init__(self) -> None:
@@ -70,11 +69,13 @@ class MODULE:
     @st.dialog(f"Create {RESOURCE_NAME}")
     def create_resource_5_81_0(self) -> None:
         name = st.text_input("Name", key=f"{RESOURCE_NAME}_creation_name_input")
-        policy = st.text_area(
-            "Role policy", key=f"{RESOURCE_NAME}_creation_policy_input"
-        )
 
-        policies_to_attach = st.multiselect("Policies to attach", options=list(st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][AWS_IAM_POLICY].keys()))
+        # resource input steps
+        path = st.text_input("Path", key=f"{RESOURCE_NAME}_creation_path_input", value="/")
+        description = st.text_input("Description", key=f"{RESOURCE_NAME}_creation_description_input")
+        policy = st.text_area(
+            "Policy", key=f"{RESOURCE_NAME}_creation_policy_input"
+        )
 
         submit_button = st.button(
             "Submit", key=f"{RESOURCE_NAME}_creation_submit_button"
@@ -84,17 +85,22 @@ class MODULE:
             if not name :
                 TOAST.create_toast("Name is necessary", "⚠️")
                 st.rerun()
+
             if not IV.a_zA_z0_9(name):
                 TOAST.create_toast(
                     "Name can only have [A-Za-z0-9] and length less then 53",
                     "⚠️",
                 )
                 st.rerun()
+            if not path :
+                TOAST.create_toast("Path is necessary", "⚠️")
+                st.rerun()
+
             if not policy :
                 TOAST.create_toast("Policy is necessary", "⚠️")
                 st.rerun()
-            self.add_resource(name=name, data={"name": name, "policy": policy, "policy_attach": policies_to_attach})
 
+            self.add_resource(name=name, data={"name": name, "path": path, "description": description, "policy": policy})
             st.rerun()
 
     def modify_resource(self, name: str, data: dict) -> None:
@@ -114,34 +120,27 @@ class MODULE:
             disabled=True,
             key=f"{RESOURCE_NAME}_modification_name_input",
         )
-        policy = st.text_area(
-            label="Role policy",
-            value=(lambda data: data["policy"] if "policy" in data else None)(data),
-            key=f"{RESOURCE_NAME}_modification_policy_input",
-        )
 
-        policies_to_attach = st.multiselect("Policies to attach", options=list(st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][AWS_IAM_POLICY].keys()), default=data["policy_attach"])
+        path = st.text_input("Path", key=f"{RESOURCE_NAME}_creation_path_input", value=data["path"])
+        description = st.text_input("Description", key=f"{RESOURCE_NAME}_creation_description_input", value=data["description"])
+        policy = st.text_area(
+            "Policy", key=f"{RESOURCE_NAME}_creation_policy_input", value=data["policy"]
+        )
+        # resource input steps
 
         submit_button = st.button(
             "Submit", key=f"{RESOURCE_NAME}_modification_submit_button"
         )
 
         if submit_button:
-            if not name :
-                TOAST.create_toast("Name is necessary", "⚠️")
-                st.rerun()
-            if not IV.a_zA_z0_9(name):
-                TOAST.create_toast(
-                    "Name can only have [A-Za-z0-9] and length less then 53",
-                    "⚠️",
-                )
+            # resource addition steps
+            if not path :
+                TOAST.create_toast("Path is necessary", "⚠️")
                 st.rerun()
             if not policy :
                 TOAST.create_toast("Policy is necessary", "⚠️")
                 st.rerun()
-            self.add_resource(
-                name=name, data={"name": name, "policy": policy, "policy_attach": policies_to_attach}, force=True
-            )
+            self.add_resource(name=name, data={"name": name, "path": path, "description": description, "policy": policy}, force=True)
             st.rerun()
 
 

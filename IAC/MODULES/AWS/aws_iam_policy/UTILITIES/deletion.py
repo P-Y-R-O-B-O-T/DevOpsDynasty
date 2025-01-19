@@ -5,8 +5,9 @@ import CORE_FUNCTIONS.toasts as TOAST
 # $$$$$$$$$$#
 
 MODULE_NAME = "AWS"
-RESOURCE_NAME = "aws_iam_role"
+RESOURCE_NAME = "aws_iam_policy"
 
+AWS_IAM_ROLE = "aws_iam_role"
 # $$$$$$$$$$#
 
 
@@ -38,13 +39,12 @@ class MODULE:
             )
         else:
             TOAST.create_toast(
-                f"The {RESOURCE_NAME} {resource_name} is being used by some other resource",
+                f"The {RESOURCE_NAME} {resource_name} is being used by {list(obligations.keys())[0]} with names {", ".join(obligations[list(obligations.keys())[0]])}",
                 "⚠️",
             )
 
     def deletion_obligations(self) -> dict[str, str | list[str]] | None:
-        # self.MAP_VERSIONS_METHODS_CREATE[st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][MODULE_NAME.lower()]]()
-        self.MAP_VERSIONS_METHODS_DELETION_OBLIGATIONS[
+        return self.MAP_VERSIONS_METHODS_DELETION_OBLIGATIONS[
             st.session_state[CONSTANTS.EXISTING_PROJECTS][
                 st.session_state[CONSTANTS.SELECTED_PROJECT]
             ][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][
@@ -52,8 +52,15 @@ class MODULE:
             ]
         ]()
 
-    def deletion_obligations_5_81_0(self) -> None:
-        pass
+    def deletion_obligations_5_81_0(self) -> dict[str, str | list[str]] | None :
+        resources_to_check = [AWS_IAM_ROLE]
+        responce = {}
+        for _ in resources_to_check :
+            if _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()] :
+                for __ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][_] :
+                    if _ not in responce : responce[_] = []
+                    responce[_].append(__)
+        if responce != {} : return responce
 
 
 # $$$$$$$$$$#
