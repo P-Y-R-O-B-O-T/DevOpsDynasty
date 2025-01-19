@@ -43,7 +43,6 @@ class MODULE:
             )
 
     def deletion_obligations(self) -> dict[str, str | list[str]] | None:
-        # self.MAP_VERSIONS_METHODS_CREATE[st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][MODULE_NAME.lower()]]()
         self.MAP_VERSIONS_METHODS_DELETION_OBLIGATIONS[
             st.session_state[CONSTANTS.EXISTING_PROJECTS][
                 st.session_state[CONSTANTS.SELECTED_PROJECT]

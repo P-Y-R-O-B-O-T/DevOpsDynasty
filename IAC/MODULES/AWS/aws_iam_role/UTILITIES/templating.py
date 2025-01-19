@@ -13,8 +13,6 @@ class MODULE:
         self.MAP_VERSIONS_METHODS_TEMPLATE = {"5.81.0": self.template_5_81_0}
 
     def template(self) -> str:
-        # return self.MAP_VERSIONS_METHODS_TEMPLATE[st.session_state[CONSTANTS.EXISTING_PROJECTS][st.session_state[CONSTANTS.SELECTED_PROJECT]][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][MODULE_NAME]](resources_data)
-        # return "TEMPLATE_DATA"
         return self.MAP_VERSIONS_METHODS_TEMPLATE[
             st.session_state[CONSTANTS.EXISTING_PROJECTS][
                 st.session_state[CONSTANTS.SELECTED_PROJECT]

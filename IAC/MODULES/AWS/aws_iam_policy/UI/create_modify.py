@@ -70,7 +70,6 @@ class MODULE:
     def create_resource_5_81_0(self) -> None:
         name = st.text_input("Name", key=f"{RESOURCE_NAME}_creation_name_input")
 
-        # resource input steps
         path = st.text_input(
             "Path", key=f"{RESOURCE_NAME}_creation_path_input", value="/"
         )
@@ -142,14 +141,12 @@ class MODULE:
         policy = st.text_area(
             "Policy", key=f"{RESOURCE_NAME}_creation_policy_input", value=data["policy"]
         )
-        # resource input steps
 
         submit_button = st.button(
             "Submit", key=f"{RESOURCE_NAME}_modification_submit_button"
         )
 
         if submit_button:
-            # resource addition steps
             if not path:
                 TOAST.create_toast("Path is necessary", "⚠️")
                 st.rerun()
