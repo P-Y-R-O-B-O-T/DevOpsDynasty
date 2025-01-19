@@ -71,18 +71,20 @@ class MODULE:
         name = st.text_input("Name", key=f"{RESOURCE_NAME}_creation_name_input")
 
         # resource input steps
-        path = st.text_input("Path", key=f"{RESOURCE_NAME}_creation_path_input", value="/")
-        description = st.text_input("Description", key=f"{RESOURCE_NAME}_creation_description_input")
-        policy = st.text_area(
-            "Policy", key=f"{RESOURCE_NAME}_creation_policy_input"
+        path = st.text_input(
+            "Path", key=f"{RESOURCE_NAME}_creation_path_input", value="/"
         )
+        description = st.text_input(
+            "Description", key=f"{RESOURCE_NAME}_creation_description_input"
+        )
+        policy = st.text_area("Policy", key=f"{RESOURCE_NAME}_creation_policy_input")
 
         submit_button = st.button(
             "Submit", key=f"{RESOURCE_NAME}_creation_submit_button"
         )
 
         if submit_button:
-            if not name :
+            if not name:
                 TOAST.create_toast("Name is necessary", "⚠️")
                 st.rerun()
 
@@ -92,15 +94,23 @@ class MODULE:
                     "⚠️",
                 )
                 st.rerun()
-            if not path :
+            if not path:
                 TOAST.create_toast("Path is necessary", "⚠️")
                 st.rerun()
 
-            if not policy :
+            if not policy:
                 TOAST.create_toast("Policy is necessary", "⚠️")
                 st.rerun()
 
-            self.add_resource(name=name, data={"name": name, "path": path, "description": description, "policy": policy})
+            self.add_resource(
+                name=name,
+                data={
+                    "name": name,
+                    "path": path,
+                    "description": description,
+                    "policy": policy,
+                },
+            )
             st.rerun()
 
     def modify_resource(self, name: str, data: dict) -> None:
@@ -121,8 +131,14 @@ class MODULE:
             key=f"{RESOURCE_NAME}_modification_name_input",
         )
 
-        path = st.text_input("Path", key=f"{RESOURCE_NAME}_creation_path_input", value=data["path"])
-        description = st.text_input("Description", key=f"{RESOURCE_NAME}_creation_description_input", value=data["description"])
+        path = st.text_input(
+            "Path", key=f"{RESOURCE_NAME}_creation_path_input", value=data["path"]
+        )
+        description = st.text_input(
+            "Description",
+            key=f"{RESOURCE_NAME}_creation_description_input",
+            value=data["description"],
+        )
         policy = st.text_area(
             "Policy", key=f"{RESOURCE_NAME}_creation_policy_input", value=data["policy"]
         )
@@ -134,13 +150,22 @@ class MODULE:
 
         if submit_button:
             # resource addition steps
-            if not path :
+            if not path:
                 TOAST.create_toast("Path is necessary", "⚠️")
                 st.rerun()
-            if not policy :
+            if not policy:
                 TOAST.create_toast("Policy is necessary", "⚠️")
                 st.rerun()
-            self.add_resource(name=name, data={"name": name, "path": path, "description": description, "policy": policy}, force=True)
+            self.add_resource(
+                name=name,
+                data={
+                    "name": name,
+                    "path": path,
+                    "description": description,
+                    "policy": policy,
+                },
+                force=True,
+            )
             st.rerun()
 
 

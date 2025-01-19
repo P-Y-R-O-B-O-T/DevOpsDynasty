@@ -52,15 +52,24 @@ class MODULE:
             ]
         ]()
 
-    def deletion_obligations_5_81_0(self) -> dict[str, str | list[str]] | None :
+    def deletion_obligations_5_81_0(self) -> dict[str, str | list[str]] | None:
         resources_to_check = [AWS_IAM_ROLE]
         responce = {}
-        for _ in resources_to_check :
-            if _ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()] :
-                for __ in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][_] :
-                    if _ not in responce : responce[_] = []
+        for _ in resources_to_check:
+            if (
+                _
+                in st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][
+                    MODULE_NAME.lower()
+                ]
+            ):
+                for __ in st.session_state[CONSTANTS.RESOURCE_CONF][
+                    CONSTANTS.RESOURCES
+                ][MODULE_NAME.lower()][_]:
+                    if _ not in responce:
+                        responce[_] = []
                     responce[_].append(__)
-        if responce != {} : return responce
+        if responce != {}:
+            return responce
 
 
 # $$$$$$$$$$#

@@ -10,6 +10,7 @@ RESOURCE_NAME = "aws_iam_role"
 
 AWS_IAM_POLICY = "aws_iam_policy"
 
+
 class MODULE:
     def __init__(self) -> None:
         self.MAP_VERSIONS_METHODS_CREATE = {"5.81.0": self.create_resource_5_81_0}
@@ -74,14 +75,21 @@ class MODULE:
             "Role policy", key=f"{RESOURCE_NAME}_creation_policy_input"
         )
 
-        policies_to_attach = st.multiselect("Policies to attach", options=list(st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][AWS_IAM_POLICY].keys()))
+        policies_to_attach = st.multiselect(
+            "Policies to attach",
+            options=list(
+                st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][
+                    MODULE_NAME.lower()
+                ][AWS_IAM_POLICY].keys()
+            ),
+        )
 
         submit_button = st.button(
             "Submit", key=f"{RESOURCE_NAME}_creation_submit_button"
         )
 
         if submit_button:
-            if not name :
+            if not name:
                 TOAST.create_toast("Name is necessary", "⚠️")
                 st.rerun()
             if not IV.a_zA_z0_9(name):
@@ -90,10 +98,17 @@ class MODULE:
                     "⚠️",
                 )
                 st.rerun()
-            if not policy :
+            if not policy:
                 TOAST.create_toast("Policy is necessary", "⚠️")
                 st.rerun()
-            self.add_resource(name=name, data={"name": name, "policy": policy, "policy_attach": policies_to_attach})
+            self.add_resource(
+                name=name,
+                data={
+                    "name": name,
+                    "policy": policy,
+                    "policy_attach": policies_to_attach,
+                },
+            )
 
             st.rerun()
 
@@ -120,14 +135,22 @@ class MODULE:
             key=f"{RESOURCE_NAME}_modification_policy_input",
         )
 
-        policies_to_attach = st.multiselect("Policies to attach", options=list(st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][MODULE_NAME.lower()][AWS_IAM_POLICY].keys()), default=data["policy_attach"])
+        policies_to_attach = st.multiselect(
+            "Policies to attach",
+            options=list(
+                st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][
+                    MODULE_NAME.lower()
+                ][AWS_IAM_POLICY].keys()
+            ),
+            default=data["policy_attach"],
+        )
 
         submit_button = st.button(
             "Submit", key=f"{RESOURCE_NAME}_modification_submit_button"
         )
 
         if submit_button:
-            if not name :
+            if not name:
                 TOAST.create_toast("Name is necessary", "⚠️")
                 st.rerun()
             if not IV.a_zA_z0_9(name):
@@ -136,11 +159,17 @@ class MODULE:
                     "⚠️",
                 )
                 st.rerun()
-            if not policy :
+            if not policy:
                 TOAST.create_toast("Policy is necessary", "⚠️")
                 st.rerun()
             self.add_resource(
-                name=name, data={"name": name, "policy": policy, "policy_attach": policies_to_attach}, force=True
+                name=name,
+                data={
+                    "name": name,
+                    "policy": policy,
+                    "policy_attach": policies_to_attach,
+                },
+                force=True,
             )
             st.rerun()
 
