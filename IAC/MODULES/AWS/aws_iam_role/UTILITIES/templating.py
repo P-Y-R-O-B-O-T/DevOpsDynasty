@@ -7,6 +7,8 @@ import CORE_FUNCTIONS.constants_n_conf as CONSTANTS
 MODULE_NAME = "AWS"
 RESOURCE_NAME = "aws_iam_role"
 
+AWS_IAM_ROLE_POLICY_ATTACHMENT = "aws_iam_role_policy_attachment"
+AWS_IAM_POLICY = "aws_iam_policy"
 
 class MODULE:
     def __init__(self) -> None:
@@ -39,6 +41,12 @@ resource "{{ resource_name }}" "{{ _ }}" {
   {{ resources[_]["policy"] }}
   )
 }
+{% for __ in resources[_]["aws_iam_policy"] %}
+resource "aws_iam_role_policy_attachment" "{{ _ }}_{{ __ }}" {
+  role = {{ resource_name }}.{{ _ }}.name
+  policy_arn = aws_iam_policy.{{ __ }}.arn
+}
+{% endfor %}
 {% endfor %}
 """
         )

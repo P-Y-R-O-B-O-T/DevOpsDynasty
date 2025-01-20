@@ -106,7 +106,7 @@ class MODULE:
                 data={
                     "name": name,
                     "policy": policy,
-                    "policy_attach": policies_to_attach,
+                    AWS_IAM_POLICY: policies_to_attach,
                 },
             )
 
@@ -142,7 +142,7 @@ class MODULE:
                     MODULE_NAME.lower()
                 ][AWS_IAM_POLICY].keys()
             ),
-            default=data["policy_attach"],
+            default=data[AWS_IAM_POLICY],
         )
 
         submit_button = st.button(
@@ -167,7 +167,7 @@ class MODULE:
                 data={
                     "name": name,
                     "policy": policy,
-                    "policy_attach": policies_to_attach,
+                    AWS_IAM_POLICY: policies_to_attach,
                 },
                 force=True,
             )

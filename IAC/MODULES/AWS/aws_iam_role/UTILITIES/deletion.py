@@ -28,7 +28,7 @@ class MODULE:
         st.rerun()
 
     def delete_resource_5_81_0(self, resource_name: str) -> None:
-        obligations = self.deletion_obligations()
+        obligations = self.deletion_obligations(resource_name)
         if obligations == None:
             del st.session_state[CONSTANTS.RESOURCE_CONF][CONSTANTS.RESOURCES][
                 MODULE_NAME.lower()
@@ -42,16 +42,16 @@ class MODULE:
                 "⚠️",
             )
 
-    def deletion_obligations(self) -> dict[str, str | list[str]] | None:
+    def deletion_obligations(self, resource_name: str) -> dict[str, str | list[str]] | None:
         self.MAP_VERSIONS_METHODS_DELETION_OBLIGATIONS[
             st.session_state[CONSTANTS.EXISTING_PROJECTS][
                 st.session_state[CONSTANTS.SELECTED_PROJECT]
             ][CONSTANTS.CONF_EXISTING_PROJECTS][CONSTANTS.PROVIDERS][
                 MODULE_NAME.lower()
             ]
-        ]()
+        ](resource_name)
 
-    def deletion_obligations_5_81_0(self) -> None:
+    def deletion_obligations_5_81_0(self, resource_name: str) -> None:
         pass
 
 
